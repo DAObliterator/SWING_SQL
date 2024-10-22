@@ -115,7 +115,7 @@ CREATE TABLE `Match` (
     CHECK (home_team_id <> away_team_id)  -- Ensure home and away teams are different
 );
 
-DELIMITER //
+DELIMITER $$
 
 CREATE TRIGGER validate_winner_team_insert
 BEFORE INSERT ON `Match`
@@ -125,7 +125,7 @@ BEGIN
         SIGNAL SQLSTATE '45000' 
         SET MESSAGE_TEXT = 'Winner team must be either the home team or away team';
     END IF;
-END; //
+END $$
 
 DELIMITER ;
 
@@ -163,6 +163,9 @@ BEGIN
 END $$
 
 DELIMITER ;
+
+
+
 
 
 -- Stats Table (Stores performance statistics for players in each match)

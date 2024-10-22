@@ -3,6 +3,7 @@ package Player;
 import DBConnection.DBConnection;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -11,6 +12,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.Vector;
 
 public class ViewPlayerGUI extends JFrame {
@@ -37,6 +39,7 @@ public class ViewPlayerGUI extends JFrame {
 
         loadPlayers();
 
+        //encloses the playerTable in a JScrollPane class
         JScrollPane scrollPane = new JScrollPane(playerTable);
         add(scrollPane, BorderLayout.CENTER);
 
@@ -55,8 +58,10 @@ public class ViewPlayerGUI extends JFrame {
         // Sorting options
         JPanel sortPanel = new JPanel();
         sortPanel.add(new JLabel("Sort by:"));
-        sortComboBox = new JComboBox<>(new String[]{"Player ID", "First Name", "Last Name", "Age", "Position"});
-        sortPanel.add(sortComboBox);
+        sortComboBox = new JComboBox<>(new String[]{"Player ID", "First Name", "Last Name", "Age"});
+        sortPanel.add(sortComboBox , BorderLayout.NORTH);
+        JLabel sortInst = new JLabel("Sort table by clicking on each column");
+        sortPanel.add(sortInst , BorderLayout.SOUTH);
         add(sortPanel, BorderLayout.NORTH);
 
         // Filtering options
@@ -232,7 +237,15 @@ public class ViewPlayerGUI extends JFrame {
     // Sort players based on selected option
     private void sortPlayers() {
         int columnIndex = sortComboBox.getSelectedIndex();
-        playerTable.getRowSorter().toggleSortOrder(columnIndex);
+        //return all the values in that column if its int sort , if its string sort alphabetically
+        System.out.println(columnIndex);
+
+        TableModel model = playerTable.getModel();
+        TableRowSorter<TableModel> sorter = new TableRowSorter<>(model);
+        playerTable.setRowSorter(sorter);
+
+// Sort based on a specific column, e.g., column 1 in ascending order
+        sorter.setSortKeys(Arrays.asList(new RowSorter.SortKey(columnIndex, SortOrder.ASCENDING)));
     }
 
     // Apply filters to the player table
