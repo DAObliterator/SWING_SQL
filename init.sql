@@ -164,6 +164,37 @@ END $$
 
 DELIMITER ;
 
+DELIMITER $$
+
+CREATE TRIGGER update_team
+BEFORE UPDATE ON Team
+FOR EACH ROW
+BEGIN
+    --check if there exists another team with the id
+    IF EXISTS ( SELECT 1 FROM  Team WHERE team_id = NEW.team_id ) THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Another Team with the same id already exists!!'
+    END IF;
+
+
+    --check if there exists another team with the team name , city name , owner , home_venue_id
+    IF EXISTS ( SELECT 1 FROM Team WHERE team_name = NEW.team_name OR city = NEW.city OR owner = NEW.owner OR home_venue_id = NEW.home_venue_id ) THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT 'Either of the four ( team_name , city , owner , home_venue_id ) already exists !!!'
+    END IF;
+
+    --check if the venue id exists in the venue table
+    IF NOT EXISTS ( SELECT 1 FROM VENUE WHERE venue_id = NEW.venue_id ) THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT 'This venue_id does not exist!!!'
+    END IF;
+
+
+
+END $$
+DELIMITER;
+
+
 
 
 

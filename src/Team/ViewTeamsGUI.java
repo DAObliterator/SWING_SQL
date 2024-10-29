@@ -1,6 +1,8 @@
 package Team;
 
 import DBConnection.DBConnection;
+import Match.UpdateMatchGUI;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
@@ -15,7 +17,7 @@ import java.sql.SQLException;
 public class ViewTeamsGUI extends JFrame {
     private JTable teamTable;
     private DefaultTableModel tableModel;
-    private JButton deleteSelectedButton, deleteAllButton;
+    private JButton deleteSelectedButton, deleteAllButton , updateSelectedButton;
     private JTextField filterField;
     private JComboBox<String> sortComboBox;
 
@@ -41,10 +43,13 @@ public class ViewTeamsGUI extends JFrame {
         // Buttons for deleting teams
         JPanel buttonPanel = new JPanel();
         deleteSelectedButton = new JButton("Delete Selected");
+        updateSelectedButton = new JButton("Update Selected");
         deleteAllButton = new JButton("Delete All");
         buttonPanel.add(deleteSelectedButton);
         buttonPanel.add(deleteAllButton);
+        buttonPanel.add(updateSelectedButton);
         add(buttonPanel, BorderLayout.SOUTH);
+
 
         // Sorting options
         JPanel sortPanel = new JPanel();
@@ -67,6 +72,8 @@ public class ViewTeamsGUI extends JFrame {
 
         // Action listener for deleting all teams
         deleteAllButton.addActionListener(e -> deleteAllTeams());
+
+        updateSelectedButton.addActionListener( e -> updateSelectedTeam());
 
         // Action listener for sorting
         sortComboBox.addActionListener(e -> sortTeams());
@@ -176,6 +183,25 @@ public class ViewTeamsGUI extends JFrame {
             closeResources(null, deleteTeamsStmt, conn);
             closeResources(null, updatePlayersStmt, null);
         }
+    }
+
+    private void updateSelectedTeam() {
+
+        int selectedRow = teamTable.getSelectedRow();
+        if (selectedRow != -1) {
+
+            int modelRow = teamTable.convertRowIndexToModel(selectedRow);
+
+
+            int teamId = (int) tableModel.getValueAt(modelRow, 0);
+
+            // Pass playerId to UpdatePlayerGUI
+            UpdateTeamGUI updateTeamGUI = new UpdateTeamGUI(teamId);
+            updateTeamGUI.setVisible(true);
+        } else {
+            JOptionPane.showMessageDialog(null, "Please select a team to update.");
+        }
+
     }
 
     // Sort teams based on the selected option

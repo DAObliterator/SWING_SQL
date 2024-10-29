@@ -6,6 +6,8 @@ import Stats.StatsOptionsGUI;
 import Team.TeamOptionsGUI;
 import Venue.VenueOptionsGUI;
 import Player.PlayerOptionsGUI;
+import Leaderboard.TeamLeaderBoardGUI; // Import your new leaderboard GUI
+import Leaderboard.PlayerLeaderBoardGUI; // Import your new leaderboard GUI
 
 import javax.swing.*;
 import java.awt.*;
@@ -32,7 +34,7 @@ public class LandingPageGUI extends JFrame {
 
         // Panel for buttons with better layout and spacing
         JPanel buttonPanel = new JPanel();
-        buttonPanel.setLayout(new GridLayout(4, 2, 15, 15)); // 4 rows, 2 columns, 15px spacing between buttons
+        buttonPanel.setLayout(new GridLayout(5, 2, 15, 15)); // Updated to 5 rows to accommodate new buttons
         buttonPanel.setBackground(Color.WHITE); // Match the panel's background to frame
         buttonPanel.setBorder(BorderFactory.createEmptyBorder(20, 50, 20, 50)); // Padding around button grid
 
@@ -45,6 +47,8 @@ public class LandingPageGUI extends JFrame {
         JButton sponsorButton = createStyledButton("Sponsor");
         JButton matchButton = createStyledButton("Match");
         JButton statsButton = createStyledButton("Stats");
+        JButton teamLeaderboardButton = createStyledButton("Team Leaderboard"); // New button
+        JButton playerLeaderboardButton = createStyledButton("Player Leaderboard"); // New button
 
         // Add action listeners to open the respective GUIs
         teamButton.addActionListener(e -> {
@@ -87,6 +91,17 @@ public class LandingPageGUI extends JFrame {
             statsOptionsGUI.setVisible(true);
         });
 
+        // Add action listeners for leaderboard buttons
+        teamLeaderboardButton.addActionListener(e -> {
+            TeamLeaderBoardGUI teamLeaderboardGUI = new TeamLeaderBoardGUI();
+            teamLeaderboardGUI.setVisible(true);
+        });
+
+        playerLeaderboardButton.addActionListener(e -> {
+            PlayerLeaderBoardGUI playerLeaderboardGUI = new PlayerLeaderBoardGUI();
+            playerLeaderboardGUI.setVisible(true);
+        });
+
         // Add buttons to the panel
         buttonPanel.add(teamButton);
         buttonPanel.add(playerButton);
@@ -96,6 +111,8 @@ public class LandingPageGUI extends JFrame {
         buttonPanel.add(sponsorButton);
         buttonPanel.add(matchButton);
         buttonPanel.add(statsButton);
+        buttonPanel.add(teamLeaderboardButton); // New button added
+        buttonPanel.add(playerLeaderboardButton); // New button added
 
         // Footer panel for spacing
         JPanel footerPanel = new JPanel();
