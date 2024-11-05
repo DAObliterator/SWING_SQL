@@ -1,6 +1,7 @@
 package Leaderboard;
 
 import DBConnection.DBConnection;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
@@ -47,19 +48,22 @@ public class TeamLeaderBoardGUI extends JFrame {
     }
 
     private void loadLeaderBoard() {
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(
-                     "SELECT t.team_id, t.team_name, " +
-                             "COALESCE(SUM(s.points), 0) AS total_points, " +
-                             "SUM(CASE WHEN s.points > 0 THEN 1 ELSE 0 END) AS wins, " +
-                             "SUM(CASE WHEN s.points = 0 THEN 1 ELSE 0 END) AS losses " +
-                             "FROM Team t " +
-                             "LEFT JOIN Player p ON t.team_id = p.team_id " +
-                             "LEFT JOIN Stats s ON p.player_id = s.player_id " +
-                             "GROUP BY t.team_id, t.team_name " +
-                             "ORDER BY total_points DESC")) {
-            ResultSet rs = pstmt.executeQuery();
+        try (
 
+                Connection conn = DBConnection.getConnection();
+                PreparedStatement pstmt = conn.prepareStatement(
+                        "SELECT t.team_id, t.team_name, " +
+                                "COUNT(m.match_id) AS total_matches, " +
+                                "COUNT(CASE WHEN m.winner_team_id = t.team_id THEN 1 END) AS wins, " +
+                                "COUNT(CASE WHEN m.winner_team_id IS NULL OR m.winner_team_id != t.team_id THEN 1 END) AS losses, " +
+                                "(COUNT(CASE WHEN m.winner_team_id = t.team_id THEN 1 END) * 2) AS total_points " +
+                                "FROM Team t " +
+                                "LEFT JOIN `Match` m ON t.team_id = m.home_team_id OR t.team_id = m.away_team_id " +
+                                "GROUP BY t.team_id, t.team_name"
+                );
+
+        ) {
+            ResultSet rs = pstmt.executeQuery();
             while (rs.next()) {
                 int teamId = rs.getInt("team_id");
                 String teamName = rs.getString("team_name");
