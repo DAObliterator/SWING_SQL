@@ -72,11 +72,11 @@ INSERT INTO Sponsor (sponsor_name, sponsor_value, team_id) VALUES
 ('StubHub', 350000.00, 8);
 
 -- Insert into Match Table
-INSERT INTO `Match` (home_team_id, away_team_id, match_date, venue_id, referee_id) VALUES
-(1, 2, '2024-10-01', 1, 1),
-(3, 4, '2024-10-02', 3, 2),
-(5, 6, '2024-10-03', 5, 3),
-(7, 8, '2024-10-04', 7, 4);
+INSERT INTO `Match` (home_team_id, away_team_id, match_date, venue_id, referee_id , winner_team_id ) VALUES
+(1, 2, '2024-10-01', 1, 1 , 1),
+(3, 4, '2024-10-02', 3, 2 , 3),
+(5, 6, '2024-10-03', 5, 3 , 5),
+(7, 8, '2024-10-04', 7, 4 , 8);
 
 -- Insert into Stats Table
 INSERT INTO Stats (player_id, match_id, points, assists, rebounds) VALUES

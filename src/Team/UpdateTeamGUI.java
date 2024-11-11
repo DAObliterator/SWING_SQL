@@ -89,7 +89,7 @@ public class UpdateTeamGUI extends JFrame {
                 // just home_venue_id is going to be sql int data type rest is string i guess
                 teamName.setText(rs.getString("team_name"));
                 city.setText(rs.getString("city"));
-                city.setText(rs.getString("owner"));
+                owner.setText(rs.getString("owner"));
                 venueId.setText(String.valueOf(rs.getInt("home_venue_id")));
             } else {
                 JOptionPane.showMessageDialog(this, "Team not found!", "Error", JOptionPane.ERROR_MESSAGE);

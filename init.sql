@@ -31,7 +31,7 @@ CREATE TABLE Player (
     weight INT,   -- Weight in kg
     team_id INT,  -- Team of the player (can be NULL if the player is not in a team)
     mentor_id INT,  -- Self-referential foreign key (NULL if no mentor)
-    FOREIGN KEY (team_id) REFERENCES Team(team_id) ON DELETE SET NULL, 
+    FOREIGN KEY (team_id) REFERENCES Team(team_id) ON DELETE SET NULL,
     FOREIGN KEY (mentor_id) REFERENCES Player(player_id) ON DELETE SET NULL
 );
 
@@ -122,7 +122,7 @@ BEFORE INSERT ON `Match`
 FOR EACH ROW
 BEGIN
     IF NEW.winner_team_id IS NOT NULL AND NEW.winner_team_id NOT IN (NEW.home_team_id, NEW.away_team_id) THEN
-        SIGNAL SQLSTATE '45000' 
+        SIGNAL SQLSTATE '45000'
         SET MESSAGE_TEXT = 'Winner team must be either the home team or away team';
     END IF;
 END $$
@@ -166,36 +166,33 @@ DELIMITER ;
 
 DELIMITER $$
 
+-- Trigger for updating team constraints
 CREATE TRIGGER update_team
 BEFORE UPDATE ON Team
 FOR EACH ROW
 BEGIN
-    --check if there exists another team with the id
-    IF EXISTS ( SELECT 1 FROM  Team WHERE team_id = NEW.team_id ) THEN
+    IF EXISTS (SELECT 1 FROM Team WHERE team_name = NEW.team_name AND team_id != NEW.team_id) THEN
         SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = 'Another Team with the same id already exists!!'
+        SET MESSAGE_TEXT = 'Another team with the same name already exists.';
     END IF;
 
-
-    --check if there exists another team with the team name , city name , owner , home_venue_id
-    IF EXISTS ( SELECT 1 FROM Team WHERE team_name = NEW.team_name OR city = NEW.city OR owner = NEW.owner OR home_venue_id = NEW.home_venue_id ) THEN
+    IF EXISTS (SELECT 1 FROM Team WHERE city = NEW.city AND team_id != NEW.team_id) THEN
         SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT 'Either of the four ( team_name , city , owner , home_venue_id ) already exists !!!'
+        SET MESSAGE_TEXT = 'Another team with the same city already exists.';
     END IF;
 
-    --check if the venue id exists in the venue table
-    IF NOT EXISTS ( SELECT 1 FROM VENUE WHERE venue_id = NEW.venue_id ) THEN
+    IF EXISTS (SELECT 1 FROM Team WHERE owner = NEW.owner AND team_id != NEW.team_id) THEN
         SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT 'This venue_id does not exist!!!'
+        SET MESSAGE_TEXT = 'Another team with the same owner already exists.';
     END IF;
 
-
-
+    IF NEW.home_venue_id IS NOT NULL AND NOT EXISTS (SELECT 1 FROM Venue WHERE venue_id = NEW.home_venue_id) THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Specified venue does not exist.';
+    END IF;
 END $$
-DELIMITER;
 
-
-
+DELIMITER ;
 
 
 
